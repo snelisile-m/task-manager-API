@@ -1,0 +1,27 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6 col-lg-5">
+        <div class="card shadow">
+            <div class="card-body p-4 text-center">
+                <h2 class="card-title mb-4">Confirm Deletion</h2>
+                
+                <p class="mb-4">Are you sure you want to delete the task "<strong>{{ task.title }}</strong>"?</p>
+                
+                <div class="d-flex justify-content-center gap-3">
+                    <a href="{% url 'task_list' %}" class="btn btn-outline-secondary">
+                        <i class="fas fa-times me-1"></i> Cancel
+                    </a>
+                    <form method="post" action="{% url 'delete_task' task.id %}" class="d-inline">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger">
+                            <i class="fas fa-trash me-1"></i> Delete
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

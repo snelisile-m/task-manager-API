@@ -1,0 +1,78 @@
+# Python bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Django stuff
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+
+# PostgreSQL dump files
+*.dump
+
+# Media & Static files (only ignore if they're user-generated or collected)
+media/
+staticfiles/
+static/
+
+# Environment
+.env
+.env.*
+
+# Virtualenv
+venv/
+ENV/
+env/
+.venv/
+
+# VS Code
+.vscode/
+
+# PyCharm
+.idea/
+*.iml
+
+# Coverage reports
+htmlcov/
+.coverage
+.tox/
+.nox/
+
+# Testing
+*.test.*
+.test_results/
+
+# MyPy and Pyre type checker
+.mypy_cache/
+.pyre/
+
+# Docker
+*.pid
+*.sock
+
+# Celery beat schedule file
+celerybeat-schedule
+
+# Gunicorn
+gunicorn.pid
+
+# Node.js (if using npm for front-end in Django)
+node_modules/
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+ehthumbs.db
+
+# JetBrains IDEs
+.idea/
+
+# Compiled translation files
+*.mo
+
+# pip-tools
+requirements.txt

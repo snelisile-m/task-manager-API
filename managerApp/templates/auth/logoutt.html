@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logged Out - Task Manager</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            line-height: 1.6; 
+            margin: 40px auto;
+            max-width: 800px;
+            padding: 20px;
+            text-align: center;
+        }
+        .message {
+            margin: 20px 0;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-left: 4px solid #28a745;
+        }
+        .btn {
+            display: inline-block;
+            padding: 8px 16px;
+            background-color: #28a745;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            margin-top: 20px;
+        }
+        .btn:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+<body>
+    <div class="message">
+        <h2>You have been successfully logged out.</h2>
+        <p>Thank you for using Task Manager.</p>
+        <a href="{% url 'login' %}" class="btn">Log in again</a>
+        <a href="{% url 'home' %}" class="btn" style="background-color: #6c757d; margin-left: 10px;">Return to Home</a>
+    </div>
+</body>
+</html>
