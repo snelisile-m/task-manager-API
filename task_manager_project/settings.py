@@ -28,6 +28,26 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 
+# Logging configuration
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': 'debug.log',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['file'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+    },
+}
+
 # Application definition
 
 AUTH_USER_MODEL = 'managerApp.User'
@@ -41,6 +61,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "managerApp",
     'rest_framework',
+    'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist',
     'api',
 ]

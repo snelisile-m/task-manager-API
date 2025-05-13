@@ -8,8 +8,8 @@
         <h1 class="display-4 mb-3">Welcome to Task Manager</h1>
         <p class="lead mb-4">Organise your tasks. Boost your productivity.</p>
         <div class="d-flex justify-content-center gap-3">
-            <a href="{% url 'login' %}" class="btn btn-login btn-lg">Login</a>
-            <a href="{% url 'register' %}" class="btn btn-register btn-lg">Register</a>
+            {% comment %} <a href="{% url 'login' %}" class="btn btn-login btn-lg">Login</a> {% endcomment %}
+            <a href="{% url 'my_tasks' %}" class="btn btn-register btn-lg">view my tasks</a>
         </div>
     </div>
 </div>

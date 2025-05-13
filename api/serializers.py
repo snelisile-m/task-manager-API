@@ -14,7 +14,7 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ('id', 'username', 'email', 'role')
 
 class TaskSerializer(serializers.ModelSerializer):
-    assigned_to = serializers.StringRelatedField(read_only=True)
+    assigned_to = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
 
     class Meta:
         model = Task
