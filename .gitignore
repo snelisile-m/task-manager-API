@@ -74,5 +74,3 @@ ehthumbs.db
 # Compiled translation files
 *.mo
 
-# pip-tools
-requirements.txt
