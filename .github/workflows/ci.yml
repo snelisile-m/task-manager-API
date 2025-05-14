@@ -9,6 +9,20 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:latest
+        env:
+          POSTGRES_DB: taskmanager
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: Ncane@1908
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
     strategy:
       matrix:
         python-version: [3.12]
@@ -36,6 +50,8 @@ jobs:
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     
     - name: Run tests
+      env:
+        DATABASE_URL: "postgres://postgres:Ncane@1908@localhost:5432/taskmanager"
       run: |
         python manage.py test --settings=task_manager_project.settings
 
