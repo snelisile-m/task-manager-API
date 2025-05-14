@@ -61,6 +61,13 @@ jobs:
 
     - uses: actions/checkout@v2
 
+    
+
+    - name: Create logs directory and file
+      run: |
+        mkdir -p logs
+        touch logs/task_manager.log
+
 
     - name: Set up Python ${{ matrix.python-version }}
 
