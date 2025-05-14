@@ -1,180 +1,71 @@
-name: Task Manager API CI
-
+name: Django CI
 
 on:
-
   push:
-
     branches: [ main ]
-
   pull_request:
-
     branches: [ main ]
-
 
 jobs:
-
-  test:
+  build:
 
     runs-on: ubuntu-latest
 
     services:
-
       postgres:
-
-        image: postgres:latest
-
+        image: postgres:13
         env:
-
           POSTGRES_DB: taskmanager
-
           POSTGRES_USER: postgres
-
           POSTGRES_PASSWORD: Ncane@1908
-
-        options: >-
-
-          --health-cmd pg_isready
-
-          --health-interval 10s
-
-          --health-timeout 5s
-
-          --health-retries 5
-
         ports:
-
           - 5432:5432
+        options: >-
+          --health-cmd="pg_isready"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
 
-        # Set a timeout for container startup
-
-        timeout-minutes: 5
-
-    strategy:
-
-      matrix:
-
-        python-version: [3.12]
-
-
-    steps:
-
-    - uses: actions/checkout@v2
-
-    
-
-    - name: Create logs directory and file
-      run: |
-        mkdir -p logs
-        touch logs/task_manager.log
-
-
-    - name: Set up Python ${{ matrix.python-version }}
-
-      uses: actions/setup-python@v2
-
-      with:
-
-        python-version: ${{ matrix.python-version }}
-
-    
-
-    - name: Install dependencies
-
-      run: |
-
-        python -m pip install --upgrade pip
-
-        pip install -r requirements.txt
-
-        pip install flake8 pytest
-
-    
-
-    - name: Run linting
-
-      run: |
-
-        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-
-        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
-
-    
-
-    - name: Run migrations
-
-      env:
-
-        DATABASE_URL: "postgres://postgres:Ncane@1908@localhost:5432/taskmanager"
-
-        DJANGO_SETTINGS_MODULE: "task_manager_project.settings"
-
-        DEBUG: "False"
-
-      run: |
-
-        python manage.py migrate
-
-
-    - name: Run tests
-
-      env:
-
-        DATABASE_URL: "postgres://postgres:Ncane@1908@localhost:5432/taskmanager"
-
-        DJANGO_SETTINGS_MODULE: "task_manager_project.settings"
-
-        DEBUG: "False"
-
-      run: |
-
-        python manage.py test
-
-
-  deploy:
-
-    needs: test
-
-    runs-on: ubuntu-latest
-
-    if: github.ref == 'refs/heads/main'
-
-    
+    env:
+      DJANGO_SECRET_KEY: django-insecure-4n8q9lxzd*hl%b5miyypd&_yyd!+3-ar^a=$lf#5bx4p0l!4=b
+      DEBUG: True
+      DB_NAME: taskmanager
+      DB_USER: postgres
+      DB_PASSWORD: Ncane@1908
+      DB_HOST: localhost
+      DB_PORT: 5432
 
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
 
-    
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
 
-    - name: Set up Python
+      - name: Create logs directory and log file
+        run: |
+          mkdir -p logs
+          touch logs/task_manager.log
 
-      uses: actions/setup-python@v2
+      - name: Wait for Postgres to be ready
+        run: |
+          until pg_isready -h localhost -p 5432 -U postgres; do
+            echo "Waiting for postgres..."
+            sleep 1
+          done
 
-      with:
+      - name: Run migrations
+        run: |
+          python manage.py makemigrations
+          python manage.py migrate
 
-        python-version: 3.12
-
-    
-
-    - name: Install dependencies
-
-      run: |
-
-        python -m pip install --upgrade pip
-
-        pip install -r requirements.txt
-
-    
-
-    - name: Collect static files
-
-      env:
-
-        DJANGO_SETTINGS_MODULE: "task_manager_project.settings"
-
-        DEBUG: "False"
-
-      run: |
-
-        python manage.py collectstatic --noinput
+      - name: Run tests
+        run: |
+          python manage.py test

@@ -30,6 +30,13 @@ ALLOWED_HOSTS = []
 
 # Logging configuration
 # Logging Configuration
+import os
+from pathlib import Path
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+LOG_DIR = BASE_DIR / 'logs'
+LOG_DIR.mkdir(exist_ok=True)
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -46,7 +53,7 @@ LOGGING = {
         },
         'file': {
             'class': 'logging.FileHandler',
-            'filename': os.path.join(BASE_DIR, 'logs', 'task_manager.log'),
+            'filename': str(LOG_DIR / 'task_manager.log'),
             'formatter': 'verbose',
         },
     },
@@ -63,6 +70,7 @@ LOGGING = {
         },
     },
 }
+
 # Application definition
 
 AUTH_USER_MODEL = 'managerApp.User'
