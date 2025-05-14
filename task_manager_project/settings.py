@@ -46,7 +46,7 @@ LOGGING = {
         },
         'file': {
             'class': 'logging.FileHandler',
-            'filename': BASE_DIR / 'logs/task_manager.log',
+            'filename': os.path.join(BASE_DIR, 'logs', 'task_manager.log'),
             'formatter': 'verbose',
         },
     },
