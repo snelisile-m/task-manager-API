@@ -1,88 +1,161 @@
 name: Task Manager API CI
 
+
 on:
+
   push:
+
     branches: [ main ]
+
   pull_request:
+
     branches: [ main ]
+
 
 jobs:
+
   test:
+
     runs-on: ubuntu-latest
+
     services:
+
       postgres:
+
         image: postgres:latest
+
         env:
+
           POSTGRES_DB: taskmanager
+
           POSTGRES_USER: postgres
+
           POSTGRES_PASSWORD: Ncane@1908
+
         options: >-
+
           --health-cmd pg_isready
+
           --health-interval 10s
+
           --health-timeout 5s
+
           --health-retries 5
+
         ports:
+
           - 5432:5432
+
     strategy:
+
       matrix:
+
         python-version: [3.12]
 
+
     steps:
+
     - uses: actions/checkout@v2
+
     
+
     - name: Create logs directory
+
       run: mkdir -p logs
 
+
     - name: Set up Python ${{ matrix.python-version }}
+
       uses: actions/setup-python@v2
+
       with:
+
         python-version: ${{ matrix.python-version }}
+
     
+
     - name: Install dependencies
+
       run: |
+
         python -m pip install --upgrade pip
+
         pip install -r requirements.txt
+
         pip install flake8 pytest
+
     
+
     - name: Run linting
+
       run: |
+
         flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+
     
+
     - name: Run migrations
+
       env:
+
         DATABASE_URL: "postgres://postgres:Ncane@1908@localhost:5432/taskmanager"
+
       run: |
+
         python manage.py migrate --settings=task_manager_project.settings
+
 
     - name: Run tests
+
       env:
+
         DATABASE_URL: "postgres://postgres:Ncane@1908@localhost:5432/taskmanager"
+
       run: |
+
         python manage.py test --settings=task_manager_project.settings
 
+
   deploy:
+
     needs: test
+
     runs-on: ubuntu-latest
+
     if: github.ref == 'refs/heads/main'
+
     
+
     steps:
+
     - uses: actions/checkout@v2
+
     
+
     - name: Set up Python
+
       uses: actions/setup-python@v2
+
       with:
+
         python-version: 3.12
+
     
+
     - name: Install dependencies
+
       run: |
+
         python -m pip install --upgrade pip
+
         pip install -r requirements.txt
+
     
-    - name: Run migrations
-      run: |
-        python manage.py migrate --settings=task_manager_project.settings
-    
+
     - name: Collect static files
+
       run: |
+
         python manage.py collectstatic --noinput --settings=task_manager_project.settings
