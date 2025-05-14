@@ -1,180 +1,48 @@
 name: Task Manager API CI
 
-
 on:
-
   push:
-
     branches: [ main ]
-
   pull_request:
-
     branches: [ main ]
-
 
 jobs:
-
-  test:
-
+  build_and_test:
     runs-on: ubuntu-latest
-
     services:
-
       postgres:
-
         image: postgres:latest
-
         env:
-
           POSTGRES_DB: taskmanager
-
           POSTGRES_USER: postgres
-
           POSTGRES_PASSWORD: Ncane@1908
-
+        ports:
+          - 5432:5432
         options: >-
-
           --health-cmd pg_isready
-
           --health-interval 10s
-
           --health-timeout 5s
-
           --health-retries 5
 
-        ports:
-
-          - 5432:5432
-
-        # Set a timeout for container startup
-
-        timeout-minutes: 5
-
-    strategy:
-
-      matrix:
-
-        python-version: [3.12]
-
-
     steps:
-
     - uses: actions/checkout@v2
-
-    
-
-    - name: Create logs directory and file
-      run: |
-        mkdir -p logs
-        touch logs/task_manager.log
-
-
-    - name: Set up Python ${{ matrix.python-version }}
-
-      uses: actions/setup-python@v2
-
-      with:
-
-        python-version: ${{ matrix.python-version }}
-
-    
-
-    - name: Install dependencies
-
-      run: |
-
-        python -m pip install --upgrade pip
-
-        pip install -r requirements.txt
-
-        pip install flake8 pytest
-
-    
-
-    - name: Run linting
-
-      run: |
-
-        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-
-        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
-
-    
-
-    - name: Run migrations
-
-      env:
-
-        DATABASE_URL: "postgres://postgres:Ncane@1908@localhost:5432/taskmanager"
-
-        DJANGO_SETTINGS_MODULE: "task_manager_project.settings"
-
-        DEBUG: "False"
-
-      run: |
-
-        python manage.py migrate
-
-
-    - name: Run tests
-
-      env:
-
-        DATABASE_URL: "postgres://postgres:Ncane@1908@localhost:5432/taskmanager"
-
-        DJANGO_SETTINGS_MODULE: "task_manager_project.settings"
-
-        DEBUG: "False"
-
-      run: |
-
-        python manage.py test
-
-
-  deploy:
-
-    needs: test
-
-    runs-on: ubuntu-latest
-
-    if: github.ref == 'refs/heads/main'
-
-    
-
-    steps:
-
-    - uses: actions/checkout@v2
-
-    
 
     - name: Set up Python
-
       uses: actions/setup-python@v2
-
       with:
+        python-version: '3.12'
 
-        python-version: 3.12
-
-    
-
-    - name: Install dependencies
-
+    - name: Install Dependencies
       run: |
-
         python -m pip install --upgrade pip
-
         pip install -r requirements.txt
 
-    
-
-    - name: Collect static files
-
+    - name: Run Tests
       env:
-
-        DJANGO_SETTINGS_MODULE: "task_manager_project.settings"
-
-        DEBUG: "False"
-
+        POSTGRES_DB: taskmanager
+        POSTGRES_USER: postgres
+        POSTGRES_PASSWORD: Ncane@1908
+        POSTGRES_HOST: localhost
+        POSTGRES_PORT: 5432
       run: |
-
-        python manage.py collectstatic --noinput
+        python manage.py test
