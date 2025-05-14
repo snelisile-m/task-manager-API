@@ -46,6 +46,10 @@ jobs:
 
           - 5432:5432
 
+        # Set a timeout for container startup
+
+        timeout-minutes: 5
+
     strategy:
 
       matrix:
@@ -102,9 +106,13 @@ jobs:
 
         DATABASE_URL: "postgres://postgres:Ncane@1908@localhost:5432/taskmanager"
 
+        DJANGO_SETTINGS_MODULE: "task_manager_project.settings"
+
+        DEBUG: "False"
+
       run: |
 
-        python manage.py migrate --settings=task_manager_project.settings
+        python manage.py migrate
 
 
     - name: Run tests
@@ -113,9 +121,13 @@ jobs:
 
         DATABASE_URL: "postgres://postgres:Ncane@1908@localhost:5432/taskmanager"
 
+        DJANGO_SETTINGS_MODULE: "task_manager_project.settings"
+
+        DEBUG: "False"
+
       run: |
 
-        python manage.py test --settings=task_manager_project.settings
+        python manage.py test
 
 
   deploy:
@@ -156,6 +168,12 @@ jobs:
 
     - name: Collect static files
 
+      env:
+
+        DJANGO_SETTINGS_MODULE: "task_manager_project.settings"
+
+        DEBUG: "False"
+
       run: |
 
-        python manage.py collectstatic --noinput --settings=task_manager_project.settings
+        python manage.py collectstatic --noinput
