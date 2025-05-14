@@ -63,9 +63,10 @@ jobs:
 
     
 
-    - name: Create logs directory
-
-      run: mkdir -p logs
+    - name: Create logs directory and file
+      run: |
+        mkdir -p logs
+        touch logs/task_manager.log
 
 
     - name: Set up Python ${{ matrix.python-version }}
