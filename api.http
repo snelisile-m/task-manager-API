@@ -1,3 +1,15 @@
+### Register a new user (normal user)
+POST http://127.0.0.1:8000/api/register/
+Content-Type: application/json
+
+{
+  "username": "Tee",
+  "password": "Tee@1908",
+  "email": "Tee@example.com",
+  "role": "ADMIN"
+ 
+}
+
 ### Login
 POST http://127.0.0.1:8000/api/login/
 Content-Type: application/json
@@ -8,48 +20,36 @@ Content-Type: application/json
 }
 
 
-### Register a new user (normal user)
-POST http://127.0.0.1:8000/api/register/
-Content-Type: application/json
-
-{
-  "username": "sne",
-  "password": "Ncane@1908",
-  "email": "user@example.com",
-  "role": "USER"
- 
-}
-
-
 ### Create a task for adminuser (assigns task)
 POST http://127.0.0.1:8000/api/tasks/
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTc0NzI0MzU4MywiaWF0IjoxNzQ3MTU3MTgzLCJqdGkiOiI0NTQ2NzU0M2E4NWI0NWE2OWYxYjA1ZjgxODQ2MWI5ZSIsInVzZXJfaWQiOjEwfQ.iVpSvd7h2UigjLjK6AuB7ZZeM7qAkCipZZrak_kB3oc
+Authorization: Bearer <access_token>
 Content-Type: application/json
 
 {
-  "title": "Finish report",
+  "title": "Testing report",
   "description": "Complete the finance report for Q2",
   "status": "PENDING",
   "due_date": "2025-06-01",
-  "assigned_to": 2
+  "assigned_to": "1"
 }
 
 
 ### Get all tasks
 GET http://127.0.0.1:8000/api/tasks/
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ3MTU3NTQ2LCJpYXQiOjE3NDcxNTcxODMsImp0aSI6IjMyM2RmOTg1MWYxNjQyZjk4NjZjZTBjZTRkMjdiYTZlIiwidXNlcl9pZCI6MTB9.FF5QdlPxm5qvh_9ICcTZ2UXBq6KY4za3JHzDeZ_D1O8
+Authorization: Bearer <access_token>
 
 ### Get my tasks
 GET http://127.0.0.1:8000/api/my-tasks/
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ3MTU3NTQ2LCJpYXQiOjE3NDcxNTcxODMsImp0aSI6IjMyM2RmOTg1MWYxNjQyZjk4NjZjZTBjZTRkMjdiYTZlIiwidXNlcl9pZCI6MTB9.FF5QdlPxm5qvh_9ICcTZ2UXBq6KY4za3JHzDeZ_D1O8
+Authorization: Bearer <access_token>
+
 ### Delete a task
-DELETE http://12000/api/tasks/5/
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ3MTMwMTgwLCJpYXQiOjE3NDcxMjk4ODAsImp0aSI6ImVhZWU4M2M4NTk4NDRkMzk5OWVkZGU3Y2M4MDA3OGFmIiwidXNlcl9pZCI6Nn0.P2EaIK68UiQyD9P88v1OjInsNBrT78h6D-KxMLZl2Ps
+DELETE http://127.0.0.1:8000/api/tasks/4/
+Authorization: Bearer <access_token>
 
 ### Refresh token
 POST http://127.0.0.1:8000/api/token/refresh/
 Content-Type: application/json
 
 {
-  "refresh": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTc0NzI0MzU4MywiaWF0IjoxNzQ3MTU3MTgzLCJqdGkiOiI0NTQ2NzU0M2E4NWI0NWE2OWYxYjA1ZjgxODQ2MWI5ZSIsInVzZXJfaWQiOjEwfQ.iVpSvd7h2UigjLjK6AuB7ZZeM7qAkCipZZrak_kB3oc"
+  "refresh": "<refresh_token>"
 }
