@@ -7,12 +7,17 @@ from django.utils import timezone
 from django.views.decorators.http import require_http_methods
 from .forms import RegisterForm, TaskForm
 from .models import Task, User
+from django.shortcuts import render, redirect
+from .forms import TaskForm
+from .models import Task
+from django.shortcuts import get_object_or_404
 
 def register(request):
     if request.method == 'POST':
         form = RegisterForm(request.POST)
         if form.is_valid():
             user = form.save()
+            print('Form is valid')
             login(request, user)
             return redirect('task_list')
     else:
@@ -22,26 +27,42 @@ def register(request):
 
 @login_required
 def add_task(request):
+    user = request.user
+    is_admin = user.is_superuser or (hasattr(user, 'role') and user.role == user.Role.ADMIN)
+
     if request.method == 'POST':
-        form = TaskForm(request.POST)
+        form = TaskForm(request.POST, user=user)
         if form.is_valid():
             task = form.save(commit=False)
-            # If the current user is not an admin, assign the task to the current user
-            if not request.user.is_admin():
-                task.assigned_to = request.user
+
+            # Assign task to current user if not admin
+            if not is_admin:
+                task.assigned_to = user
+
+            task.created_by = user
             task.save()
-            messages.success(request, 'Task added successfully!')
             return redirect('task_list')
     else:
-        form = TaskForm()
-        # If user is admin, show all users in the dropdown
-        if request.user.is_admin():
-            form.fields['assigned_to'].queryset = User.objects.all()
-        else:
-            # For non-admin users, hide the assigned_to field since we'll set it to current user
-            form.fields['assigned_to'].widget = forms.HiddenInput()
-            form.fields['assigned_to'].initial = request.user
-    return render(request, 'tasks/add_task.html', {'form': form, 'is_admin': request.user.is_admin()})
+        form = TaskForm(user=user)
+
+    return render(request, 'tasks/add_task.html', {
+        'form': form,
+        'is_admin': is_admin,  # Pass this to template if needed
+    })
+# def add_task(request):
+#     if request.method == 'POST':
+#         form = TaskForm(request.POST, user=request.user)
+#         if form.is_valid():
+#             task = form.save(commit=False)
+
+#             if request.user.role != request.user.Role.ADMIN:
+#                 task.assigned_to = request.user  # Auto-assign
+#             task.save()
+#             return redirect('task_list')
+#     else:
+#         form = TaskForm(user=request.user)
+
+#     return render(request, 'tasks/add_task.html', {'form': form})
 
 
 @login_required
@@ -69,28 +90,29 @@ def logout_handler(request):
 
 @login_required
 def edit_task(request, task_id):
-    task = Task.objects.get(id=task_id)
+    task = get_object_or_404(Task, id=task_id)
+
     if request.method == 'POST':
         form = TaskForm(request.POST, instance=task)
+        if not request.user.is_staff:
+            form.fields['assigned_to'].required = False
+
         if form.is_valid():
             task = form.save(commit=False)
-            # Update the completed status based on the form data
-            completed = form.cleaned_data.get('completed', False)
-            task.completed = completed
-            
-            # Update completion date if needed
-            if completed and not task.completed_date:
-                task.completed_date = timezone.now()
-            elif not completed:
-                task.completed_date = None
-                
+            if not request.user.is_staff:
+                task.assigned_to = request.user
             task.save()
-            form.save_m2m()  # Save many-to-many data if any
-            messages.success(request, 'Task updated successfully!')
             return redirect('task_list')
+
     else:
         form = TaskForm(instance=task)
-    return render(request, 'tasks/edit_task.html', {'form': form})
+        if not request.user.is_staff:
+            form.fields['assigned_to'].required = False
+
+    return render(request, 'tasks/edit_task.html', {
+        'form': form,
+        'is_admin': request.user.is_staff,
+    })
 
 
 def delete_task(request, task_id):

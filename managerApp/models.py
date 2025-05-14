@@ -32,7 +32,7 @@ class Task(models.Model):
         choices=Status.choices,
         default=Status.PENDING,
     )
-    completed_date = models.DateTimeField(null=True, blank=True)
+
 
     def __str__(self):
         return self.title

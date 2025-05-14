@@ -12,37 +12,47 @@
                 <div class="card-body">
                     <form method="post" class="needs-validation" novalidate>
                         {% csrf_token %}
-                        <div class="mb-3">
-                            <label for="id_title" class="form-label">Title</label>
-                            <input type="text" name="title" class="form-control" id="id_title" value="{{ form.title.value|default:'' }}" required>
-                            <div class="invalid-feedback">
-                                Please provide a title for the task.
-                            </div>
-                        </div>
-                        <div class="mb-3">
-                            <label for="id_description" class="form-label">Description</label>
-                            <textarea name="description" class="form-control" id="id_description" rows="3">{{ form.description.value|default:'' }}</textarea>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="id_due_date" class="form-label">Due Date</label>
-                                <input type="date" name="due_date" class="form-control" id="id_due_date" 
-                                       value="{{ form.due_date.value|date:'Y-m-d' }}" required>
-                                <div class="invalid-feedback">
-                                    Please provide a due date.
+{{ form.non_field_errors }}
+                        {% for field in form %}
+                            {% if field.name == 'assigned_to' and not is_admin %}
+                                <!-- Hide the assigned_to field for non-admin users -->
+                            {% else %}
+                                <div class="mb-4">
+                                    <label for="{{ field.id_for_label }}" class="form-label fw-bold">
+                                        {{ field.label }}
+                                        {% if field.field.required %}<span class="text-danger">*</span>{% endif %}
+                                    </label>
+                                    {% if field.name == 'assigned_to' and is_admin %}
+                                        <select name="{{ field.name }}" id="{{ field.id_for_label }}" class="form-select">
+                                            <option value="">Select a user...</option>
+                                            {% for user in field.field.queryset %}
+                                                <option value="{{ user.id }}" {% if field.value == user.id %}selected{% endif %}>
+                                                    {{ user.get_full_name|default:user.username }}
+                                                </option>
+                                            {% endfor %}
+                                        </select>
+                                    {% else %}
+                                        <input type="{{ field.field.widget.input_type }}" 
+                                               name="{{ field.name }}" 
+                                               id="{{ field.id_for_label }}"
+                                               class="form-control form-control-lg"
+                                               {% if field.field.required %}required{% endif %}
+                                               {% if field.value %}value="{{ field.value }}"{% endif %}
+                                               {% if field.field.widget.attrs.placeholder %}placeholder="{{ field.field.widget.attrs.placeholder }}"{% endif %}>
+                                    {% endif %}
+                                    
+                                    {% if field.help_text %}
+                                        <div class="form-text">{{ field.help_text }}</div>
+                                    {% endif %}
+                                    
+                                    {% if field.errors %}
+                                        <div class="invalid-feedback d-block">
+                                            {{ field.errors.0 }}
+                                        </div>
+                                    {% endif %}
                                 </div>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="id_assigned_to" class="form-label">Assign To</label>
-                                <select name="assigned_to" class="form-select" id="id_assigned_to" required>
-                                    {% for user in form.assigned_to.field.queryset %}
-                                        <option value="{{ user.id }}" {% if form.assigned_to.value == user.id %}selected{% endif %}>
-                                            {{ user.get_full_name|default:user.username }}
-                                        </option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                        </div>
+                            {% endif %}
+                        {% endfor %}
                         <div class="mb-3 form-check">
                             <input type="checkbox" name="completed" class="form-check-input" id="id_completed" 
                                    {% if form.completed.value %}checked{% endif %}>

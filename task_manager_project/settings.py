@@ -29,25 +29,40 @@ ALLOWED_HOSTS = []
 
 
 # Logging configuration
+# Logging Configuration
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime} {module} {message}',
+            'style': '{',
+        },
+    },
     'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose',
+        },
         'file': {
-            'level': 'DEBUG',
             'class': 'logging.FileHandler',
-            'filename': 'debug.log',
+            'filename': BASE_DIR / 'logs/task_manager.log',
+            'formatter': 'verbose',
         },
     },
     'loggers': {
         'django': {
-            'handlers': ['file'],
-            'level': 'DEBUG',
+            'handlers': ['console', 'file'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+        'tasks': {
+            'handlers': ['console', 'file'],
+            'level': 'INFO',
             'propagate': True,
         },
     },
 }
-
 # Application definition
 
 AUTH_USER_MODEL = 'managerApp.User'

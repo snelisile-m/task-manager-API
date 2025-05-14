@@ -2,6 +2,7 @@ from rest_framework import viewsets, permissions
 import logging
 
 logger = logging.getLogger(__name__)
+
 from rest_framework_simplejwt.views import TokenObtainPairView
 from managerApp.models import Task
 from .serializers import TaskSerializer, CustomTokenObtainPairSerializer
@@ -38,10 +39,14 @@ class TaskViewSet(viewsets.ModelViewSet):
 
     def perform_update(self, serializer):
         task = self.get_object()
-        if serializer.validated_data.get('status') == Task.Status.COMPLETED and not task.completed_date:
-            serializer.save(completed_date=timezone.now())
-        else:
-            serializer.save()
+        try:
+            if serializer.validated_data.get('status') == Task.Status.COMPLETED and not task.completed_date:
+                serializer.save(completed_date=timezone.now())
+            else:
+                serializer.save()
+        except Exception as e:
+            logger.error(f"Error updating task: {str(e)}")
+            raise ValidationError("Failed to update task")
 
 class MyTasksView(APIView):
     permission_classes = [permissions.IsAuthenticated]

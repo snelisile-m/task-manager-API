@@ -55,24 +55,17 @@
                         {% endif %}
                     
                         {% for field in form %}
-                            {% if field.name == 'assigned_to' and not is_admin %}
-                                <!-- Hide the assigned_to field for non-admin users -->
-                                {{ field }}
+                            {% if field.name == 'assigned_to' and not is_admin or field.name == 'completed' and not is_admin %}
+                                <!-- Hide the assigned_to and completed fields for non-admin users -->
                             {% else %}
                                 <div class="mb-4">
                                     <label for="{{ field.id_for_label }}" class="form-label fw-bold">
                                         {{ field.label }}
                                         {% if field.field.required %}<span class="text-danger">*</span>{% endif %}
                                     </label>
+                                    {% if field.name == 'due_date' %}
+                                        <input type="date" id="due_date" name="due_date" class="form-control" value="{{ field.value }}" {% if field.field.required %}required{% endif %}>
                                     
-                                    {% if field.name == 'description' %}
-                                        <textarea name="{{ field.name }}" id="{{ field.id_for_label }}" class="form-control" rows="4" 
-                                            {% if field.field.required %}required{% endif %}>{% if field.value %}{{ field.value }}{% endif %}</textarea>
-                                    {% elif field.name == 'completed' %}
-                                        <div class="form-check form-switch">
-                                            <input type="checkbox" name="{{ field.name }}" id="{{ field.id_for_label }}" 
-                                                   class="form-check-input" role="switch" {% if field.value %}checked{% endif %}>
-                                        </div>
                                     {% elif field.name == 'assigned_to' and is_admin %}
                                         <!-- Show dropdown for admin users -->
                                         <select name="{{ field.name }}" id="{{ field.id_for_label }}" class="form-select">
@@ -121,3 +114,13 @@
     </div>
 </div>
 {% endblock %}
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script>
+    // Initialize Flatpickr on the due date input
+    flatpickr(".datepicker", {
+        enableTime: false,
+        dateFormat: "y-m-d",
+    });
+</script>

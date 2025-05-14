@@ -1,61 +1,39 @@
-### Register a new user (normal user)
-POST http://127.0.0.1:8000/api/register/
-Content-Type: application/json
-
-{
-  "username": "bongi",
-  "password": "Ncane@1908",
-  "email": "bongi@example.com",
-  "role": "USER"
- 
-}
-
-### Register a new user (admin)
-POST http://127.0.0.1:8000/api/register/
-Content-Type: application/json
-
-{
-  "username": "Lead-ncane",
-  "password": "Ncane@1908",
-  "email": "lead-ncane@example.com",
-  "role": "ADMIN"
-}
-
 ### Login
 POST http://127.0.0.1:8000/api/login/
 Content-Type: application/json
 
 {
-  "username": "Lead-ncane",
+  "username": "adminuser",
   "password": "Ncane@1908"
 }
 
 
-### Create a task for adminuser (after logging in)
+### Register a new user (normal user)
+POST http://127.0.0.1:8000/api/register/
+Content-Type: application/json
+
+{
+  "username": "sne",
+  "password": "Ncane@1908",
+  "email": "user@example.com",
+  "role": "USER"
+ 
+}
+
+
+### Create a task for adminuser (assigns task)
 POST http://127.0.0.1:8000/api/tasks/
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTc0NzI0MzU4MywiaWF0IjoxNzQ3MTU3MTgzLCJqdGkiOiI0NTQ2NzU0M2E4NWI0NWE2OWYxYjA1ZjgxODQ2MWI5ZSIsInVzZXJfaWQiOjEwfQ.iVpSvd7h2UigjLjK6AuB7ZZeM7qAkCipZZrak_kB3oc
 Content-Type: application/json
 
 {
-  "username": "adminuser",
-  "password": "Ncane@1908",
   "title": "Finish report",
   "description": "Complete the finance report for Q2",
-  "due_date": "2025-06-01"
+  "status": "PENDING",
+  "due_date": "2025-06-01",
+  "assigned_to": 2
 }
 
-### Create a task for Lead-ncane (after logging in)
-POST http://127.0.0.1:8000/api/tasks/
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ3MTU2OTA1LCJpYXQiOjE3NDcxNTY1MzgsImp0aSI6IjdkYzgwYzEwYTA4YjRiMTY5ZmY5ZDljNzlhZTVlMjYxIiwidXNlcl9pZCI6MTB9.IZ5AVkMHhS17TncvezwsOKRt6mPzQe0UVvt0xooP8VA
-Content-Type: application/json
-
-{
-  "username": "Lead-ncane",
-  "password": "Ncane@1908",
-  "title": "Finish report",
-  "description": "Complete the tests for project",
-  "due_date": "2025-06-01"
-}
 
 ### Get all tasks
 GET http://127.0.0.1:8000/api/tasks/
